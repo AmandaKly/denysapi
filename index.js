@@ -8,7 +8,7 @@ const port = 3000;
 // Configuração da conexão com o PostgreSQL
 const pool = new Pool({
   user: 'atv',
-  host: 'containerbackend',
+  host: 'projetokubernetes.postgres.database.azure.com',
   database: 'produtoshomolog',
   password: 'Atividade@123', // Use a senha que você definiu anteriormente
   port: 5432,
