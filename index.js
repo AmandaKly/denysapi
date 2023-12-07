@@ -9,7 +9,7 @@ const port = 3000;
 const pool = new Pool({
   user: 'atv',
   host: 'containerbackend',
-  database: 'produtos',
+  database: 'produtoshomolog',
   password: 'Atividade@123', // Use a senha que você definiu anteriormente
   port: 5432,
 });
