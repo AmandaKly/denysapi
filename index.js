@@ -10,7 +10,7 @@ const pool = new Pool({
   user: 'atv',
   host: 'projetokubernetes.postgres.database.azure.com',
   database: 'produtoshomolog',
-  password: 'Atividade@123', // Use a senha que você definiu anteriormente
+  password: 'Atividade123!', // Use a senha que você definiu anteriormente
   port: 5432,
 });
 
