@@ -1,74 +1,54 @@
 const express = require('express');
-const { Pool } = require('pg');
-const cors = require('cors'); // Importe o middleware 'cors'
+const Item = require('./models/Item'); // Importe o modelo do item (ou qualquer modelo que você definiu)
+const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Configuração da conexão com o PostgreSQL
-const pool = new Pool({
-  host:'projetokubernetes.postgres.database.azure.com',
-  user:'atv',
-  database:'produtoshomolog',
-  password:'Atividade123!', // Use a senha que você definiu anteriormente
-  port:5432,
-});
+app.use(bodyParser.json());
 
-
-pool.connect((err, client, release) => {
-    if (err) {
-    return console.error('Erro ao obter cliente do pool', err);
-    }
-
-    const createTableItens = `
-    CREATE TABLE IF NOT EXISTS itens (
-    id serial PRIMARY KEY,
-    nome VARCHAR(255),
-    quantidade INTEGER
-    );
-`
-
-    // Executa a consulta para criar a tabela
-    client.query(createTableItens, (err, result) => {
-    release(); // Libera o cliente de volta ao pool
-
-    if (err) {
-        return console.error('Erro ao criar a tabela', err);
-    }
-
-    console.log('Tabela criada com sucesso');
-    });
-});
-
-app.use(express.json());
-
-// Use o middleware 'cors' para permitir solicitações de origens diferentes
-app.use(cors());
-
-// Rota GET para recuperar dados do banco de dados
+// Rota para buscar itens
 app.get('/dados', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM itens');
-    res.json(rows);
+    const itens = await Item.findAll(); // Consulta todos os itens na tabela 'itens'
+    res.json(itens);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao buscar dados do banco de dados.' });
+    res.status(500).json({ error: 'Erro ao buscar itens do banco de dados.' });
   }
 });
 
-// Rota POST para adicionar dados ao banco de dados
+// Rota para adicionar um item
 app.post('/dados', async (req, res) => {
   const { nome, quantidade } = req.body;
   try {
-    await pool.query('INSERT INTO itens (nome, quantidade) VALUES($1, $2)', [nome, quantidade]);
-    console.log()
-    res.status(201).json({ message: 'Dado adicionado com sucesso.' });
+    const novoItem = await Item.create({ nome, quantidade }); // Cria um novo item na tabela 'itens'
+    res.status(201).json(novoItem);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao adicionar dado ao banco de dados.' });
+    res.status(500).json({ error: 'Erro ao adicionar um novo item.' });
   }
 });
 
+// Rota para deletar um item específico
+app.delete('/dados/:id', async (req, res) => {
+  const itemId = req.params.id;
+  try {
+    await Item.destroy({ where: { id: itemId } }); // Deleta o item com o ID fornecido
+    res.status(200).json({ message: 'Item deletado com sucesso.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao deletar o item.' });
+  }
+});
+
+// Middleware para tratamento de erros
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Erro no servidor!');
+});
+
+// Inicialização do servidor
 app.listen(port, () => {
   console.log(`Servidor Express em execução na porta ${port}`);
 });
