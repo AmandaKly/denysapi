@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
   host: 'projetokubernetes.postgres.database.azure.com',
   username: 'atv',
   password: 'Atividade123!',
-  database: 'produtoshomolog',
+  database: 'produtosdevelop',
   port: 5432,
   logging: false,
   dialectOptions: {
