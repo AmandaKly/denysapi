@@ -8,10 +8,10 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT,
-  logging: false,
+  logging: process.env.DB_LOGGING === 'true',
   dialectOptions: {
     ssl: {
-      rejectUnauthorized: false, // Use apenas se estiver enfrentando problemas de certificado
+      rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true',
     },
   },
 });
