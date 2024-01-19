@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-
+// O correto sempre será utilizar um arquivo .env, porém, por motivos maiores foi decidido manter as variáveis dessa forma.
 const sequelize = new Sequelize({
   dialect: 'postgres',
   host: 'projetokubernetes.postgres.database.azure.com',
